@@ -1,0 +1,32 @@
+modLoader="javafml" #mandatory
+loaderVersion="[41,)" #mandatory 
+license="All rights reserved"
+[[mods]] #mandatory
+modId="fadingnightvision" #mandatory
+version="${file.jarVersion}" #mandatory
+displayName="Fading Night Vision" #mandatory
+logoFile="examplemod.png" #optional
+credits="Thanks for this example mod goes to Java" #optional
+authors="Xaikii" #optional
+description='''
+A Mod that gives the Night Vision effect a fade-in&-out
+'''
+[[dependencies.fadingnightvision]] #optional
+    # the modid of the dependency
+    modId="forge" #mandatory
+    # Does this dependency have to exist - if not, ordering below must be specified
+    mandatory=true #mandatory
+    # The version range of the dependency
+    versionRange="[41,)" #mandatory
+    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+    ordering="NONE"
+    # Side this dependency is applied on - BOTH, CLIENT or SERVER
+    side="BOTH"
+# Here's another dependency
+[[dependencies.fadingnightvision]]
+    modId="minecraft"
+    mandatory=true
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="[1.19,)"
+    ordering="NONE"
+    side="BOTH"

@@ -1,0 +1,14 @@
+{
+    "package": "net.perpetualeve.fadingnightvision.mixins",
+    "required": true,
+    "refmap": "fadingnightvision.refmap.json",
+    "minVersion": "0.8",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "GameRendererMixin"
+    ],
+    "client": [],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
