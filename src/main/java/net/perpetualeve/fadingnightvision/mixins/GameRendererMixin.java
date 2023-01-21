@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.perpetualeve.fadingnightvision.IGameRendererMixin;
@@ -26,7 +27,7 @@ public class GameRendererMixin implements IGameRendererMixin {
 		} else if(time <= 1.25f) {
 			ci.setReturnValue(i = 0);
 		} else {
-			ci.setReturnValue(Math.max((1f+(i = Math.min(--i, t)))/(1f+t), 0.0f)); 
+			ci.setReturnValue((1f+(i = Mth.clamp(--i, 0.0f, t))/(1f+t)));
 		}
 	}
 
