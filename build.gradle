@@ -64,7 +64,7 @@ minecraft {
         client {
             workingDirectory project.file('run')
             mods {
-                armoradjustment {
+                fadingnightvision {
                     source sourceSets.main
                 }
             }
@@ -73,7 +73,7 @@ minecraft {
             workingDirectory project.file('run')
 
             mods {
-                armoradjustment {
+                fadingnightvision {
                     source sourceSets.main
                 }
             }
@@ -81,7 +81,7 @@ minecraft {
         gameTestServer {
             workingDirectory project.file('run')
             mods {
-                armoradjustment {
+                fadingnightvision {
                     source sourceSets.main
                 }
             }
@@ -90,7 +90,7 @@ minecraft {
         data {
             workingDirectory project.file('run')
             mods {
-                armoradjustment {
+                fadingnightvision {
                     source sourceSets.main
                 }
             }
