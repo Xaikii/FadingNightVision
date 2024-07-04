@@ -1,49 +1,70 @@
 package net.perpetualeve.fadingnightvision;
 
+import org.lwjgl.glfw.GLFW;
+
+import carbonconfiglib.CarbonConfig;
+import carbonconfiglib.api.ConfigType;
+import carbonconfiglib.config.Config;
+import carbonconfiglib.config.ConfigEntry.DoubleValue;
+import carbonconfiglib.config.ConfigHandler;
+import carbonconfiglib.config.ConfigSection;
+import carbonconfiglib.config.ConfigSettings;
+import carbonconfiglib.utils.AutomationType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.ToggleKeyMapping;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig.Type;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 
-@SuppressWarnings("resource")
 @Mod(FadingNightVision.MODID)
 public class FadingNightVision {
 
 	public static final String MODID = "fadingnightvision";
 
-	public float time;
-	DoubleValue fade_time;
-	public static ForgeConfigSpec CONFIG;
+	public static ConfigHandler	CONFIG;
+	public static DoubleValue	FADE_IN_TIME;
+	public static DoubleValue	FADE_OUT_TIME;
 	
-	public static float visionProgress = 0.0f;
-	public float i = 0;
+	public static ToggleKeyMapping KEY = new ToggleKeyMapping("key.fadingnightvision.toggle_night_vision",
+		GLFW.GLFW_KEY_V, "key.categories.misc", ( ) -> true);
+	
+	public static float		visionProgress	= 0.0f;
+	public static boolean	active			= false;
+	public static boolean	enabled			= true;
 
 	public FadingNightVision() {
-		ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-		builder.push("general");
-		builder.comment("How many seconds the fade should take");
-		fade_time = builder.defineInRange("fade_time", 5D, 0.01D, Double.MAX_VALUE);
-		builder.pop();
-		CONFIG = builder.build();
-		ModLoadingContext.get().registerConfig(Type.COMMON, CONFIG, "FadingNightVision.toml");
+		if (!FMLLoader.getDist( ).isClient( )) return;
+		Config config = new Config("fadingnightvision");
+		CONFIG = CarbonConfig.CONFIGS.createConfig(config, ConfigSettings.withConfigType(ConfigType.SERVER)
+			.withAutomations(AutomationType.AUTO_RELOAD, AutomationType.AUTO_SYNC, AutomationType.AUTO_LOAD));
 
-		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		bus.addListener(this::onLoad);
-		bus.addListener(this::onFileChange);
+		ConfigSection values = new ConfigSection("values");
+
+		FADE_IN_TIME	= values.addDouble("fade_in_time", 3d, "how fast it should fade in").setMax(10d).setMin(0.05d);
+		FADE_OUT_TIME	= values.addDouble("fade_out_time", 1.4d, "how fast it should fade out").setMax(10d).setMin(0.05d);
+		config.add(values);
+
 		MinecraftForge.EVENT_BUS.register(this);
+
+		CONFIG.addLoadedListener(( ) ->
+		{
+
+		});
+		CONFIG.register( );
+
+		IEventBus bus = FMLJavaModLoadingContext.get( ).getModEventBus( );
+
+		MinecraftForge.EVENT_BUS.register(this);
+		bus.addListener(this::keyRegister);
 	}
 	
 	@SubscribeEvent
@@ -52,25 +73,27 @@ public class FadingNightVision {
 		if(player == null || e.phase == Phase.END) return;
 		nightVisionUpdate(player);
 	}
-	
+
+	public void keyRegister(RegisterKeyMappingsEvent event) {
+		event.register(KEY);
+	}
+
+	@SubscribeEvent
+	public void input(InputEvent.Key event) {
+		if (event.getAction( ) != 0) return;
+		if(KEY.getKey( ).getValue( ) == event.getKey( )) {
+			enabled = !enabled;
+		}
+	}
+
 	public float nightVisionUpdate(Player player) {
-		MobEffectInstance mei = player.getEffect(MobEffects.NIGHT_VISION);
-		if(mei == null) return visionProgress = 0.0f;
-		float duration = mei.getDuration();
-		float t = 20*time;
-		if(duration > t) {
-			return visionProgress = (i = Math.min(++i, t))/t;
-		} else if(duration <= 1.25f) {
-			return visionProgress = 0.0f;
-		} 
-		return visionProgress = (i = Math.min(--i, t))/t;
-	}
-
-	public void onLoad(ModConfigEvent.Loading configEvent) {
-		time = fade_time.get().floatValue();
-	}
-
-	public void onFileChange(ModConfigEvent.Reloading configEvent) {
-		time = fade_time.get().floatValue();
+		if (active && enabled) {
+			active = false;
+			if (visionProgress >= 1.0f) {
+				return 1.0f;
+			}
+			return (visionProgress = Math.min(visionProgress + (1f / (20f * FADE_IN_TIME.getValue( ).floatValue( ))), 1.0f));
+		}
+		return (visionProgress = Math.max(visionProgress - (1f / (20f * FADE_OUT_TIME.getValue( ).floatValue( ))), 0.0f));
 	}
 }
