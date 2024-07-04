@@ -51,8 +51,8 @@ public class FadingNightVision {
 
 		ConfigSection values = new ConfigSection("values");
 
-		FADE_IN_TIME	= values.addDouble("fade_in_time", 5, "how fast it should fade in").setMax(10d).setMin(0.05d);
-		FADE_OUT_TIME	= values.addDouble("fade_out_time", 3, "how fast it should fade out").setMax(10d).setMin(0.05d);
+		FADE_IN_TIME	= values.addDouble("fade_in_time", 3d, "how fast it should fade in").setMax(10d).setMin(0.05d);
+		FADE_OUT_TIME	= values.addDouble("fade_out_time", 1.4d, "how fast it should fade out").setMax(10d).setMin(0.05d);
 		config.add(values);
 
 		MinecraftForge.EVENT_BUS.register(this);
@@ -84,18 +84,8 @@ public class FadingNightVision {
 	public void input(InputEvent.Key event) {
 		if (event.getAction( ) != 0) return;
 		if(KEY.getKey( ).getValue( ) == event.getKey( )) {
-			System.out.println("bruh");
 			enabled = !enabled;
 		}
-//		KEY.getKey( ).getNumericKeyValue( ).ifPresent(T ->
-//		{
-//			if (KEY.getKey( ).getValue( ) == event.getKey( ))
-//				enabled = !enabled;
-//			System.out.println("yo");
-//		});
-//		if (event.getKeyMapping( ).equals(KEY)) {
-//			enabled = !enabled;
-//		}
 	}
 
 	public float nightVisionUpdate(Player player) {
