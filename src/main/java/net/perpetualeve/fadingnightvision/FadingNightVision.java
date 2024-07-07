@@ -22,10 +22,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-<<<<<<< HEAD
-=======
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider;
->>>>>>> branch '1.20.1' of git@github.com:Xaikii/FadingNightVision.git
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 
@@ -46,10 +43,6 @@ public class FadingNightVision {
 	public static boolean	enabled			= true;
 
 	public FadingNightVision( ) {
-<<<<<<< HEAD
-=======
-
->>>>>>> branch '1.20.1' of git@github.com:Xaikii/FadingNightVision.git
 		if (!FMLLoader.getDist( ).isClient( )) return;
 		Config config = new Config("fadingnightvision");
 		CONFIG = CarbonConfig.CONFIGS.createConfig(config, ConfigSettings.withConfigType(ConfigType.SERVER)
@@ -89,11 +82,8 @@ public class FadingNightVision {
 	@SubscribeEvent
 	public void input(InputEvent.Key event) {
 		if (event.getAction( ) != 0) return;
-<<<<<<< HEAD
 		if (KEY.getKey( ).getValue( ) == event.getKey( )) {
-=======
 		if(KEY.getKey( ).getValue( ) == event.getKey( )) {
->>>>>>> branch '1.20.1' of git@github.com:Xaikii/FadingNightVision.git
 			enabled = !enabled;
 		}
 	}
