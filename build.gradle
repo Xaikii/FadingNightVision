@@ -93,11 +93,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("curse.maven:carbon-config-898104:5290831")
     implementation fg.deobf("curse.maven:jei-238222:5440261")
-<<<<<<< HEAD
-=======
     implementation fg.deobf("curse.maven:embeddium-908741:5496987")
     implementation fg.deobf("curse.maven:oculus-581495:5299671")
->>>>>>> branch '1.20.1' of git@github.com:Xaikii/FadingNightVision.git
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     
     implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:0.2.0-beta.9"))
