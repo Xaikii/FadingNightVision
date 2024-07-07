@@ -22,7 +22,6 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 
@@ -83,7 +82,6 @@ public class FadingNightVision {
 	public void input(InputEvent.Key event) {
 		if (event.getAction( ) != 0) return;
 		if (KEY.getKey( ).getValue( ) == event.getKey( )) {
-		if(KEY.getKey( ).getValue( ) == event.getKey( )) {
 			enabled = !enabled;
 		}
 	}
