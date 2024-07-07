@@ -33,15 +33,15 @@ public class FadingNightVision {
 	public static ConfigHandler	CONFIG;
 	public static DoubleValue	FADE_IN_TIME;
 	public static DoubleValue	FADE_OUT_TIME;
-	
+
 	public static ToggleKeyMapping KEY = new ToggleKeyMapping("key.fadingnightvision.toggle_night_vision",
 		GLFW.GLFW_KEY_V, "key.categories.misc", ( ) -> true);
-	
+
 	public static float		visionProgress	= 0.0f;
 	public static boolean	active			= false;
 	public static boolean	enabled			= true;
 
-	public FadingNightVision() {
+	public FadingNightVision( ) {
 		if (!FMLLoader.getDist( ).isClient( )) return;
 		Config config = new Config("fadingnightvision");
 		CONFIG = CarbonConfig.CONFIGS.createConfig(config, ConfigSettings.withConfigType(ConfigType.SERVER)
@@ -66,11 +66,11 @@ public class FadingNightVision {
 		MinecraftForge.EVENT_BUS.register(this);
 		bus.addListener(this::keyRegister);
 	}
-	
+
 	@SubscribeEvent
 	public void clientTick(ClientTickEvent e) {
-		LocalPlayer player = Minecraft.getInstance().player;
-		if(player == null || e.phase == Phase.END) return;
+		LocalPlayer player = Minecraft.getInstance( ).player;
+		if (player == null || e.phase == Phase.END) return;
 		nightVisionUpdate(player);
 	}
 
@@ -81,7 +81,7 @@ public class FadingNightVision {
 	@SubscribeEvent
 	public void input(InputEvent.Key event) {
 		if (event.getAction( ) != 0) return;
-		if(KEY.getKey( ).getValue( ) == event.getKey( )) {
+		if (KEY.getKey( ).getValue( ) == event.getKey( )) {
 			enabled = !enabled;
 		}
 	}

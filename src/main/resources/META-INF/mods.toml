@@ -3,7 +3,7 @@ loaderVersion="[41,)" #mandatory
 license="All rights reserved"
 [[mods]] #mandatory
 modId="fadingnightvision" #mandatory
-version="${file.jarVersion}" #mandatory
+version="${mod_version}" #mandatory
 displayName="Fading Night Vision" #mandatory
 logoFile="examplemod.png" #optional
 credits="Thanks for this example mod goes to Java" #optional
