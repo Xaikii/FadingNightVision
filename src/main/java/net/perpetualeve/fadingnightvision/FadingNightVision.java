@@ -10,11 +10,10 @@ import carbonconfiglib.config.ConfigHandler;
 import carbonconfiglib.config.ConfigSection;
 import carbonconfiglib.config.ConfigSettings;
 import carbonconfiglib.utils.AutomationType;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.ToggleKeyMapping;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
@@ -34,26 +33,28 @@ public class FadingNightVision {
 	public static DoubleValue	FADE_IN_TIME;
 	public static DoubleValue	FADE_OUT_TIME;
 
-	public static ToggleKeyMapping KEY = new ToggleKeyMapping("key.fadingnightvision.toggle_night_vision",
-		GLFW.GLFW_KEY_V, "key.categories.misc", ( ) -> true);
+	public static KeyMapping KEY = new KeyMapping("key.fadingnightvision.toggle_night_vision",
+		GLFW.GLFW_KEY_V, "key.categories.misc");
 
 	public static float		visionProgress	= 0.0f;
 	public static boolean	active			= false;
 	public static boolean	enabled			= true;
 
+	private static boolean pressed = false;
+
 	public FadingNightVision( ) {
 		if (!FMLLoader.getDist( ).isClient( )) return;
 		Config config = new Config("fadingnightvision");
-		CONFIG = CarbonConfig.CONFIGS.createConfig(config, ConfigSettings.withConfigType(ConfigType.SERVER)
-			.withAutomations(AutomationType.AUTO_RELOAD, AutomationType.AUTO_SYNC, AutomationType.AUTO_LOAD));
+
+		CONFIG = CarbonConfig.CONFIGS.createConfig(config, ConfigSettings.withConfigType(ConfigType.CLIENT)
+			.withAutomations(AutomationType.AUTO_RELOAD, AutomationType.AUTO_SYNC, AutomationType.AUTO_LOAD)
+			.withBaseFolder(CarbonConfig.CONFIGS.getBasePath( ).resolve("fadingnv")));
 
 		ConfigSection values = new ConfigSection("values");
 
 		FADE_IN_TIME	= values.addDouble("fade_in_time", 3d, "how fast it should fade in").setMax(10d).setMin(0.05d);
 		FADE_OUT_TIME	= values.addDouble("fade_out_time", 1.4d, "how fast it should fade out").setMax(10d).setMin(0.05d);
 		config.add(values);
-
-		MinecraftForge.EVENT_BUS.register(this);
 
 		CONFIG.addLoadedListener(( ) ->
 		{
@@ -72,18 +73,18 @@ public class FadingNightVision {
 		LocalPlayer player = Minecraft.getInstance( ).player;
 		if (player == null || e.phase == Phase.END) return;
 		nightVisionUpdate(player);
+
+		if (KEY.isDown( ) && !pressed) {
+			enabled	= !enabled;
+			pressed	= true;
+		}
+		else if (!KEY.isDown( )) {
+			pressed = false;
+		}
 	}
 
 	public void keyRegister(RegisterKeyMappingsEvent event) {
 		event.register(KEY);
-	}
-
-	@SubscribeEvent
-	public void input(InputEvent.Key event) {
-		if (event.getAction( ) != 0) return;
-		if (KEY.getKey( ).getValue( ) == event.getKey( )) {
-			enabled = !enabled;
-		}
 	}
 
 	public float nightVisionUpdate(Player player) {
