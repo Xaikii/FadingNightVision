@@ -3,10 +3,10 @@ loaderVersion="[41,)" #mandatory
 license="All rights reserved"
 [[mods]] #mandatory
 modId="fadingnightvision" #mandatory
-version="${mod_version}" #mandatory
+version="1.2.2.1" #mandatory
 displayName="Fading Night Vision" #mandatory
 logoFile="examplemod.png" #optional
-credits="Thanks for this example mod goes to Java" #optional
+credits="" #optional
 authors="Xaikii" #optional
 description='''
 A Mod that gives the Night Vision effect a fade-in&-out
@@ -21,7 +21,7 @@ A Mod that gives the Night Vision effect a fade-in&-out
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
-    side="BOTH"
+    side="CLIENT"
 # Here's another dependency
 [[dependencies.fadingnightvision]]
     modId="minecraft"
