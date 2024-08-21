@@ -72,7 +72,7 @@ public class FadingNightVision {
 	public void clientTick(ClientTickEvent e) {
 		LocalPlayer player = Minecraft.getInstance( ).player;
 		if (player == null || e.phase == Phase.END) return;
-		nightVisionUpdate(player);
+		nightVisionUpdate();
 
 		if (KEY.isDown( ) && !pressed) {
 			enabled	= !enabled;
@@ -87,7 +87,7 @@ public class FadingNightVision {
 		event.register(KEY);
 	}
 
-	public float nightVisionUpdate(Player player) {
+	public static float nightVisionUpdate() {
 		if (active && enabled) {
 			active = false;
 			if (visionProgress >= 1.0f) {
