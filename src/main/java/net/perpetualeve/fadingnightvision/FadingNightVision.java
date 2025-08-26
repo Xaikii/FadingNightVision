@@ -10,20 +10,17 @@ import carbonconfiglib.config.ConfigHandler;
 import carbonconfiglib.config.ConfigSection;
 import carbonconfiglib.config.ConfigSettings;
 import carbonconfiglib.utils.AutomationType;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.ToggleKeyMapping;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(FadingNightVision.MODID)
 public class FadingNightVision {
@@ -34,14 +31,16 @@ public class FadingNightVision {
 	public static DoubleValue	FADE_IN_TIME;
 	public static DoubleValue	FADE_OUT_TIME;
 
-	public static ToggleKeyMapping KEY = new ToggleKeyMapping("key.fadingnightvision.toggle_night_vision",
-		GLFW.GLFW_KEY_V, "key.categories.misc", ( ) -> true);
+	public static KeyMapping KEY = new KeyMapping("key.fadingnightvision.toggle_night_vision",
+		GLFW.GLFW_KEY_V, "key.categories.misc");
 
 	public static float		visionProgress	= 0.0f;
 	public static boolean	active			= false;
 	public static boolean	enabled			= true;
 
-	public FadingNightVision( ) {
+	private static boolean pressed = false;
+
+	public FadingNightVision(IEventBus bus, ModContainer modContainer) {
 		if (!FMLLoader.getDist( ).isClient( )) return;
 		Config config = new Config("fadingnightvision");
 		CONFIG = CarbonConfig.CONFIGS.createConfig(config, ConfigSettings.withConfigType(ConfigType.SERVER)
@@ -53,40 +52,36 @@ public class FadingNightVision {
 		FADE_OUT_TIME	= values.addDouble("fade_out_time", 1.4d, "how fast it should fade out").setMax(10d).setMin(0.05d);
 		config.add(values);
 
-		MinecraftForge.EVENT_BUS.register(this);
-
 		CONFIG.addLoadedListener(( ) ->
 		{
 
 		});
 		CONFIG.register( );
 
-		IEventBus bus = FMLJavaModLoadingContext.get( ).getModEventBus( );
-
-		MinecraftForge.EVENT_BUS.register(this);
+		NeoForge.EVENT_BUS.register(this);
 		bus.addListener(this::keyRegister);
 	}
 
 	@SubscribeEvent
-	public void clientTick(ClientTickEvent e) {
+	public void clientTick(ClientTickEvent.Post e) {
 		LocalPlayer player = Minecraft.getInstance( ).player;
-		if (player == null || e.phase == Phase.END) return;
-		nightVisionUpdate(player);
+		if (player == null) return;
+		nightVisionUpdate();
+
+		if (KEY.isDown( ) && !pressed) {
+			enabled	= !enabled;
+			pressed	= true;
+		}
+		else if (!KEY.isDown( )) {
+			pressed = false;
+		}
 	}
 
 	public void keyRegister(RegisterKeyMappingsEvent event) {
 		event.register(KEY);
 	}
 
-	@SubscribeEvent
-	public void input(InputEvent.Key event) {
-		if (event.getAction( ) != 0) return;
-		if (KEY.getKey( ).getValue( ) == event.getKey( )) {
-			enabled = !enabled;
-		}
-	}
-
-	public float nightVisionUpdate(Player player) {
+	public float nightVisionUpdate() {
 		if (active && enabled) {
 			active = false;
 			if (visionProgress >= 1.0f) {

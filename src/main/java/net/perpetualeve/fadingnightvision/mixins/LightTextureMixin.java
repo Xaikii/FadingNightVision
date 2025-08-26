@@ -10,7 +10,7 @@ import net.perpetualeve.fadingnightvision.FadingNightVision;
 
 @Mixin(value = LightTexture.class)
 public class LightTextureMixin {
-
+	
 	@ModifyExpressionValue(method = "updateLightTexture", at = @At(value = "CONSTANT", args = "floatValue=0.0", ordinal = 1))
 	public float fnv$nightVisionEffect(float original) {
 		return Math.max(FadingNightVision.visionProgress, original);
